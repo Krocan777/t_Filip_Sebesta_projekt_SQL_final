@@ -1,2 +1,2 @@
-# t_Filip_-ebesta_projekt_SQL_final
+# t_Filip_Sebesta_projekt_SQL_final
 Projekt SQL 
