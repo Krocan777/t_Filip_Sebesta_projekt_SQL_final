@@ -105,13 +105,71 @@ FROM (
 		date,
 		confirmed
 	FROM covid19_basic_differences
-	WHERE country = 'Austria'
 ) AS cbd
 LEFT JOIN covid19_tests ct 
 	ON cbd.date = ct.`date` 
 	AND cbd.country = ct.country
-	ORDER BY cbd.date 
+	ORDER BY cbd.date, cbd.country 
+;
 
+SELECT 
+	cbd.country,
+	cbd.date,
+	cbd.confirmed,
+	ct.tests_performed
+FROM covid19_tests AS ct 
+RIGHT JOIN covid19_basic_differences AS cbd 
+	ON cbd.country = ct.country 
+	AND cbd.`date` = ct.`date` 
+ORDER BY cbd.`date`, cbd.country 
+;
 
+SELECT 
+	cbd.country,
+	cbd.date,
+	cbd.confirmed,
+	ct.tests_performed
+FROM covid19_basic_differences AS cbd 
+LEFT JOIN covid19_tests AS ct 
+	ON cbd.country = ct.country 
+	AND cbd.`date` = ct.`date` 
+ORDER BY cbd.`date`,cbd.country 
+;
+	
+SELECT 
+	*
+FROM covid19_basic_differences cbd
+;
+
+SELECT 
+	*
+FROM covid19_tests ct
+;
+
+SELECT 
+	cbd.country,
+	cbd.date,
+	ct.country,
+	ct.date
+FROM covid19_basic_differences AS cbd, covid19_tests AS ct 
+WHERE cbd.country = ct.country 
+;
+
+SELECT 
+	ct.country,
+	ct.date
+FROM covid19_tests AS ct
+EXCEPT
+SELECT 
+	cbd.country,
+	cbd.date
+FROM covid19_basic_differences cbd 
+;
+
+SELECT 
+	*
+FROM covid19_tests ct 
+WHERE tests_performed IS NULL 
+;
 
 
