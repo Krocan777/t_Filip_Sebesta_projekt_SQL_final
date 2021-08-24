@@ -172,4 +172,21 @@ FROM covid19_tests ct
 WHERE tests_performed IS NULL 
 ;
 
+SELECT DISTINCT 
+	country
+FROM covid19_basic_differences cbd 
+WHERE country LIKE 'US%'
+;
 
+
+SELECT 
+	cbd.country,
+	cbd.date,
+	cbd.confirmed,
+	cttpm.tests_performed
+FROM covid19_basic_differences AS cbd 
+LEFT JOIN covid19_tests_tests_performed_modified AS cttpm 
+	ON cbd.country = cttpm.country 
+	AND cbd.`date` = cttpm.`date` 
+ORDER BY cbd.`date`,cbd.country 
+;
