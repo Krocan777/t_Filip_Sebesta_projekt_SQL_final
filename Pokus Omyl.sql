@@ -332,3 +332,35 @@ FROM cbd_and_cttpm_2 AS cac2
 LEFT JOIN lookup_table AS lt 
 	ON cac2.country = lt.country 
 	AND lt.province IS NULL 
+;
+
+SELECT
+	*,
+	CASE WHEN weekday(`date`) BETWEEN 0 AND 4
+		THEN 'Pracovni den'
+		ELSE 'Vikend'
+	END AS PracovniDen_Vikend
+FROM cbd_and_cttpm_3 cac 
+;
+
+SELECT 
+	WEEKDAY(`date`)
+FROM cbd_and_cttpm_3 cac2 
+;
+
+SELECT 
+	*,
+	CASE WHEN MONTH(`date`) BETWEEN 3 AND 5
+			THEN 0
+		 WHEN MONTH(`date`) BETWEEN 6 AND 8
+			THEN 1
+		 WHEN MONTH(`date`) BETWEEN 9 AND 11
+			THEN 2
+		 ELSE 3
+	END AS Rocni_obdobi
+FROM cbd_and_cttpm_4 cac 
+;
+
+SELECT 
+	MONTH(`date`) 
+FROM cbd_and_cttpm_4 cac 

@@ -126,6 +126,26 @@ SELECT
 	*
 FROM cbd_and_cttpm_4 AS cac4 
 
+-- Vytvoreni tabulky cbd_and_cttpm_5 > napojeni 2. cas. promenne, rocni obdobi
+CREATE TABLE cbd_and_cttpm_5 AS 
+SELECT 
+	*,
+	CASE WHEN MONTH(`date`) BETWEEN 3 AND 5
+			THEN 0
+		 WHEN MONTH(`date`) BETWEEN 6 AND 8
+			THEN 1
+		 WHEN MONTH(`date`) BETWEEN 9 AND 11
+			THEN 2
+		 ELSE 3
+	END AS Rocni_obdobi
+FROM cbd_and_cttpm_4 AS cac4
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm_5
+;
+
 
 
 
