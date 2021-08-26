@@ -318,4 +318,17 @@ SELECT DISTINCT
 	country
 FROM covid19_basic_differences cbd
 ;
-dfas
+
+SELECT 
+	*
+FROM lookup_table lt 
+WHERE country = 'Korea, South'
+;
+
+SELECT 
+	cac2.*,
+	lt.population
+FROM cbd_and_cttpm_2 AS cac2 
+LEFT JOIN lookup_table AS lt 
+	ON cac2.country = lt.country 
+	AND lt.province IS NULL 

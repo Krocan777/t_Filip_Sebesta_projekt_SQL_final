@@ -108,10 +108,23 @@ LEFT JOIN lookup_table AS lt
 
 SELECT	
 	*
-FROM cbd_and_cttpm_3 cac 
+FROM cbd_and_cttpm_3 AS cac3 
 ;
 
+-- Vytvoreni tabulky cbd_and_cttpm_4 > napojeni 1. cas. promenne, prac. den/vikend
+CREATE TABLE cbd_and_cttpm_4 AS 
+SELECT
+	*,
+	CASE WHEN WEEKDAY(`date`) BETWEEN 0 AND 4
+		THEN 'Pracovni den'
+		ELSE 'Vikend'
+	END AS PracovniDen_Vikend
+FROM cbd_and_cttpm_3 AS cac3
+;
 
+SELECT 
+	*
+FROM cbd_and_cttpm_4 AS cac4 
 
 
 
