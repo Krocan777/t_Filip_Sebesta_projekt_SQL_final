@@ -95,7 +95,21 @@ SELECT
 FROM cbd_and_cttpm_2 AS cac2
 ;
 
--- Napojeni sloupce population z lookup_table na cbd_and_cttpm_2
+-- Vytvoreni tabulky cbd_and_cttpm_3 > napojeni sloupce population z lookup_table na cbd_and_cttpm_2
+CREATE TABLE cbd_and_cttpm_3 AS 
+SELECT 
+	cac2.*,
+	lt.population
+FROM cbd_and_cttpm_2 AS cac2 
+LEFT JOIN lookup_table AS lt 
+	ON cac2.country = lt.country 
+	AND lt.province IS NULL 
+;
+
+SELECT	
+	*
+FROM cbd_and_cttpm_3 cac 
+;
 
 
 
