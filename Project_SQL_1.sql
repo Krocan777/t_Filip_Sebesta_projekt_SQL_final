@@ -190,3 +190,100 @@ LEFT JOIN covid19_tests_tests_performed_modified AS cttpm
 	AND cbd.`date` = cttpm.`date` 
 ORDER BY cbd.`date`,cbd.country 
 ;
+
+SELECT 
+	cac.country,
+	cac.date,
+	cac.confirmed,
+	cac.tests_performed,
+	lt.population
+FROM cbd_and_cttpm AS cac
+LEFT JOIN lookup_table AS lt
+	ON cac.country = lt.country 
+		AND lt.province IS NULL 
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm cac
+;
+
+-- Vytvoreni VIEW pro nasledny EXCEPT pro nasledny UNION s cbd_and_cttpm
+
+SELECT 
+	cttpm.country,
+	cttpm.date,
+	cac.confirmed,
+	cttpm.tests_performed
+FROM covid19_tests_tests_performed_modified AS cttpm 
+LEFT JOIN cbd_and_cttpm AS cac 
+	ON cttpm.country = cac.country 
+	AND cttpm.`date` = cac.`date` 
+ORDER BY cttpm.`date`, cttpm.country 
+;
+
+DROP VIEW pokus 
+;
+
+SELECT 
+	country
+FROM countries c 
+EXCEPT 
+SELECT country
+FROM cbd_and_cttpm cac 
+;
+
+SELECT 
+	country
+FROM cbd_and_cttpm cac 
+EXCEPT
+SELECT
+	country 
+FROM countries c 
+
+SELECT DISTINCT 
+	country
+FROM pokus
+;
+SELECT 
+	*
+FROM countries c
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm cac 
+;
+
+SELECT DISTINCT 
+	country 
+FROM countries c 
+EXCEPT
+SELECT DISTINCT 
+	country 
+FROM cbd_and_cttpm cac 
+;
+
+-- Dalsi pokusy
+SELECT 
+	*
+FROM cbd_and_cttpm_EXCEPT
+EXCEPT 
+SELECT
+	*
+FROM cbd_and_cttpm
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm cac 
+WHERE country = 'Mexico'
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm cac 
+UNION
+SELECT 
+	*
+FROM cbd_and_cttpm_for_union cacfu 
