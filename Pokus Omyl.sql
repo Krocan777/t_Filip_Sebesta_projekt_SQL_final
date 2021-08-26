@@ -287,3 +287,35 @@ UNION
 SELECT 
 	*
 FROM cbd_and_cttpm_for_union cacfu 
+;
+
+SELECT DISTINCT 
+	cac2.country,
+	lt.population
+FROM cbd_and_cttpm_2 AS cac2 
+LEFT JOIN lookup_table AS lt 
+	ON cac2.country = lt.country
+	AND lt.province IS NULL
+;
+
+SELECT DISTINCT 
+	country,
+	population 
+FROM lookup_table lt 
+WHERE province IS NULL
+;
+
+SELECT DISTINCT 
+	country
+FROM cbd_and_cttpm_2 cac 
+;
+
+SELECT DISTINCT 	
+	country
+FROM covid19_tests
+EXCEPT
+SELECT DISTINCT 
+	country
+FROM covid19_basic_differences cbd
+;
+dfas
