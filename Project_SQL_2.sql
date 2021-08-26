@@ -7,6 +7,8 @@ SELECT
 		 	THEN 'US' 
 		 WHEN country = 'Taiwan' 
 		 	THEN 'Taiwan*'
+		 WHEN country = 'South Korea'
+		 	THEN 'Korea, South'
 		 ELSE country
 	END AS country,
 	date,
@@ -17,10 +19,10 @@ FROM covid19_tests ct
 SELECT 
 	*
 FROM covid19_tests_tests_performed_modified cttpm
-WHERE country = 'Czechia'
 ;
 
--- Vytvoreni tabulky pomoci VIEW cttpm, kde se nachazi data country, date, confirmed, tests_performed --
+-- Vytvoreni TABLE pomoci VIEW cttpm, kde se budou nachazet data country, date, confirmed, tests_performed (budou chybet zeme, ktere se nachazi 
+-- v covid19_tests ale nenachazi se v covid19_basic_differences) --
 CREATE TABLE cbd_and_cttpm AS 
 SELECT 
 	cbd.country,
@@ -36,12 +38,14 @@ ORDER BY cbd.`date`,cbd.country
 
 SELECT 
 	*
-FROM cbd_and_cttpm cac
+FROM cbd_and_cttpm AS cac
 ;
 
--- Vytvoøení TABLE pro následné vytvoøení VIEW EXCEPT s tabulkou cbd_and_cttpm pro následné vytvoøení TABLE Union
+-- Vytvoreni pomocne TABLE pro následné vytvoøení TABLE s EXCEPT s tabulkou cbd_and_cttpm pro následné vytvoøení TABLE s UNION s tabulkou cbd_and_cttpm,
+-- z duvodu doplneni zemi, ktere se nachazi v tabulce covid19_tests a nejsou v nove vytvorene tabulce cbd_and_cttpm
+
 -- Vytvoreni TABLE pro EXCEPT 
-CREATE TABLE cbd_and_cttpm_EXCEPT AS 
+CREATE TABLE cbd_and_cttpm_for_except AS 
 SELECT 
 	cttpm.country,
 	cttpm.date,
@@ -56,14 +60,14 @@ ORDER BY cttpm.`date`, cttpm.country
 
 SELECT 
 	*
-FROM cbd_and_cttpm_except cace  
+FROM cbd_and_cttpm_for_except AS cacfe  
 ;
 
--- Vytvoreni VIEW pro UNION
-CREATE VIEW cbd_and_cttpm_for_union AS 
+-- Vytvoreni TABLE pro UNION (Tato tabulka obsahuje zaznamy zemi z covid19_test, ktere nejsou v tabulce cbd a tudiz take ne v nove vytvorene tabulce cac)
+CREATE TABLE cbd_and_cttpm_for_union AS 
 SELECT 
 	*
-FROM cbd_and_cttpm_EXCEPT
+FROM cbd_and_cttpm_for_except cacfe 
 EXCEPT 
 SELECT
 	*
@@ -72,7 +76,7 @@ FROM cbd_and_cttpm
 
 SELECT 
 	*
-FROM cbd_and_cttpm_for_union cacfu 
+FROM cbd_and_cttpm_for_union AS cacfu 
 ;
 
 -- Vytvoreni TABLE cbd_and_cttpm_2, z duvodu chybejicich statu, ktere se puvodne vyskytovaly v tabulce covid19_tests ale nevyskytovaly se v tabulce cbd 
@@ -88,10 +92,12 @@ FROM cbd_and_cttpm_for_union cacfu
 
 SELECT 
 	*
-FROM cbd_and_cttpm_2 cac
-WHERE country = 'Australia'
-ORDER BY country 
+FROM cbd_and_cttpm_2 AS cac2
 ;
+
+-- Napojeni sloupce population z lookup_table na cbd_and_cttpm_2
+
+
 
 
 
