@@ -405,6 +405,36 @@ FROM countries
 SELECT 
 	*
 FROM countries_modified
+;
 
+SELECT 
+	cac5.*,
+	cm.population_density
+FROM cbd_and_cttpm_5 AS cac5
+LEFT JOIN countries_modified AS cm 
+	ON cac5.country = cm.country 
+;
 
+SELECT  
+	CASE WHEN country = 'Czech Republic'
+			THEN 'Czechia'
+		 WHEN country = 'United States'
+		 	THEN 'US' 
+		 WHEN country = 'Taiwan' 
+		 	THEN 'Taiwan*'
+		 WHEN country = 'South Korea'
+		 	THEN 'Korea, South'
+		 ELSE country
+	END AS country,
+	`year`,
+	ROUND(GDP/population, 3) AS HDP_na_obyvatele
+FROM economies e 
+WHERE `year` = 2019
+	OR `year` = 2020
+;
+
+SELECT 
+	*
+FROM economies e 
+WHERE country = 'Germany'
 	
