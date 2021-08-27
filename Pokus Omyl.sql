@@ -364,3 +364,47 @@ FROM cbd_and_cttpm_4 cac
 SELECT 
 	MONTH(`date`) 
 FROM cbd_and_cttpm_4 cac 
+;
+
+SELECT 	
+	*
+FROM countries c
+;
+
+SELECT 
+	country 
+FROM covid19_tests ct 
+UNION
+SELECT 
+	country 
+FROM covid19_basic_differences cbd 
+;
+
+SELECT 
+	*
+FROM lookup_table lt 
+WHERE country = 'Taiwan*'
+;
+
+CREATE VIEW countries_modified AS 
+SELECT 
+	CASE WHEN country = 'Czech Republic'
+			THEN 'Czechia'
+		 WHEN country = 'United States'
+		 	THEN 'US' 
+		 WHEN country = 'Taiwan' 
+		 	THEN 'Taiwan*'
+		 WHEN country = 'South Korea'
+		 	THEN 'Korea, South'
+		 ELSE country
+	END AS country,
+	population_density
+FROM countries
+;
+
+SELECT 
+	*
+FROM countries_modified
+
+
+	

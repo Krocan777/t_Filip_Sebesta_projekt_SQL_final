@@ -146,6 +146,26 @@ SELECT
 FROM cbd_and_cttpm_5
 ;
 
+-- Vytvoreni VIEW countries_modified, protoze potrebujeme napojit hustotu zalidneni z tabulky countries na cbd_and_cttpm_5 a nejake zeme maji jine nazvy
+CREATE VIEW countries_modified AS 
+SELECT 
+	CASE WHEN country = 'Czech Republic'
+			THEN 'Czechia'
+		 WHEN country = 'United States'
+		 	THEN 'US' 
+		 WHEN country = 'Taiwan' 
+		 	THEN 'Taiwan*'
+		 WHEN country = 'South Korea'
+		 	THEN 'Korea, South'
+		 ELSE country
+	END AS country,
+	population_density
+FROM countries
+;
+
+SELECT 
+	*
+FROM countries_modified cm 
 
 
 
