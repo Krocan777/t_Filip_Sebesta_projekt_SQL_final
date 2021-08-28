@@ -39,6 +39,7 @@ ORDER BY cbd.`date`,cbd.country
 SELECT 
 	*
 FROM cbd_and_cttpm AS cac
+
 ;
 
 -- Vytvoreni pomocne TABLE pro následné vytvoøení TABLE s EXCEPT s tabulkou cbd_and_cttpm pro následné vytvoøení TABLE s UNION s tabulkou cbd_and_cttpm,
@@ -270,6 +271,34 @@ SELECT
 FROM cbd_and_cttpm_7 cac
 ;
 
+-- Vytvoreni tabulky cbd_and_cttpm_8 > napojeni gini ukazatele kazde zeme na kazdy zaznam
+CREATE TABLE cbd_and_cttpm_8 AS 
+SELECT 
+	cac7.*,
+	e.gini_avg
+FROM cbd_and_cttpm_7 AS cac7
+LEFT JOIN (
+			SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				ROUND(AVG(gini), 3) AS gini_avg
+			FROM economies
+			GROUP BY country 
+			) AS e
+	ON cac7.country = e.country 
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm_8 AS cac8
 
 
 

@@ -495,16 +495,39 @@ LEFT JOIN (
 	AND YEAR(cac6.`date`) = e.`year` + 1
 ;
 
-SELECT 
-	*
+SELECT DISTINCT 
+	country,
+	gini 
 FROM economies e 
 ;
 
 SELECT 
 	cac7.*,
-	AVG(e.gini)
+	e.gini_avg
 FROM cbd_and_cttpm_7 AS cac7
-LEFT JOIN economies AS e 
+LEFT JOIN (
+			SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				ROUND(AVG(gini), 3) AS gini_avg
+			FROM economies
+			GROUP BY country 
+			) AS e
 	ON cac7.country = e.country 
+;
+
+SELECT 
+	country,
+	AVG(gini)
+FROM economies e 
+GROUP BY country 
 
 	
