@@ -230,9 +230,36 @@ SELECT
 FROM cbd_and_cttpm_7 cac 
 ;
 
+-- Napadl me elegatnejsi kod, proto DROPnu VIEW economies_hdp_na_obyvatele a TABLE cbd_and_cttpm_7
+DROP VIEW economies_hdp_na_obyvatele 
+;
 
+DROP TABLE cbd_and_cttpm_7 
+;
 
+-- Vytvoreni tabulky cbd_and_cttpm_7 > napojeni HDP na obyvatele, na kazdy zaznam se napojuje ukazatel z predchoziho roku 
+CREATE TABLE cbd_and_cttpm_7 AS 
+SELECT 
+	cac6.*,
+	e.GDP/e.population AS HDP_na_obyvatele
+FROM cbd_and_cttpm_6 AS cac6
+LEFT JOIN (
+			SELECT 
+				country,
+				population,
+				GDP,
+				`year`
+			FROM economies
+			WHERE `year` = 2019 OR 2020
+			) AS e
+	ON cac6.country = e.country
+	AND YEAR(cac6.`date`) = e.`year` + 1
+;
 
+SELECT 	
+	*
+FROM cbd_and_cttpm_7 cac
+;
 
 
 

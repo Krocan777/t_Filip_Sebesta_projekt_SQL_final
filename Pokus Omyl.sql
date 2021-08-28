@@ -462,11 +462,35 @@ LEFT JOIN (
 			) AS ehno
 	ON cac6.country = ehno.country
 	AND YEAR(cac6.`date`) = ehno.`year` + 1 
-
 ;
 
 SELECT 
 	*
 FROM economies_hdp_na_obyvatele ehno 
+;
+
+SELECT 
+	cac6.*,
+	e.GDP/e.population AS HDP_na_obyvatele
+FROM cbd_and_cttpm_6 AS cac6
+LEFT JOIN (
+			SELECT 
+				country,
+				population,
+				GDP,
+				`year`
+			FROM economies
+			WHERE `year` = 2019 OR 2020
+			) AS e
+	ON cac6.country = e.country
+	AND YEAR(cac6.`date`) = e.`year` + 1
+ORDER BY date DESC 
+
+	
+;
+
+SELECT 
+	*
+FROM economies e 
 
 	
