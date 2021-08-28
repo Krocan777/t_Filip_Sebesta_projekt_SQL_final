@@ -206,6 +206,32 @@ WHERE `year` = 2019
 SELECT 
 	*
 FROM economies_hdp_na_obyvatele ehno 
+;
+
+-- Vytvoreni tabulky cbd_and_cttpm_7 > napojeni HDP na obyvatele, na kazdy zaznam se napojuje ukazatel z predchoziho roku 
+CREATE TABLE cbd_and_cttpm_7 AS 
+SELECT 
+	cac6.*,
+	ehno.HDP_na_obyvatele
+FROM cbd_and_cttpm_6 AS cac6
+LEFT JOIN (
+			SELECT 
+				HDP_na_obyvatele,
+				country,
+				`year`
+			FROM economies_hdp_na_obyvatele
+			) AS ehno
+	ON cac6.country = ehno.country
+	AND YEAR(cac6.`date`) = ehno.`year` + 1 
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm_7 cac 
+;
+
+
+
 
 
 

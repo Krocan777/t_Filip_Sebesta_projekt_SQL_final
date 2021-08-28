@@ -437,4 +437,36 @@ SELECT
 	*
 FROM economies e 
 WHERE country = 'Germany'
+;
+
+SELECT DISTINCT 
+	cac6.*,
+	ehno.HDP_na_obyvatele
+FROM cbd_and_cttpm_6 AS cac6
+LEFT JOIN economies_hdp_na_obyvatele AS ehno 
+	ON cac6.country = ehno.country 
+	AND YEAR(cac6.`date`) = ehno.`year` -1
+ORDER BY date 
+;
+
+SELECT 
+	cac6.*,
+	ehno.HDP_na_obyvatele
+FROM cbd_and_cttpm_6 AS cac6
+LEFT JOIN (
+			SELECT 
+				HDP_na_obyvatele,
+				country,
+				`year`
+			FROM economies_hdp_na_obyvatele
+			) AS ehno
+	ON cac6.country = ehno.country
+	AND YEAR(cac6.`date`) = ehno.`year` + 1 
+
+;
+
+SELECT 
+	*
+FROM economies_hdp_na_obyvatele ehno 
+
 	
