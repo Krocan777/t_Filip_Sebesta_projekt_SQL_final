@@ -475,22 +475,36 @@ SELECT
 FROM cbd_and_cttpm_6 AS cac6
 LEFT JOIN (
 			SELECT 
-				country,
 				population,
 				GDP,
-				`year`
+				`year`,
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country
 			FROM economies
 			WHERE `year` = 2019 OR 2020
 			) AS e
 	ON cac6.country = e.country
 	AND YEAR(cac6.`date`) = e.`year` + 1
-ORDER BY date DESC 
-
-	
 ;
 
 SELECT 
 	*
 FROM economies e 
+;
+
+SELECT 
+	cac7.*,
+	AVG(e.gini)
+FROM cbd_and_cttpm_7 AS cac7
+LEFT JOIN economies AS e 
+	ON cac7.country = e.country 
 
 	
