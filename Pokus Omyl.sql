@@ -726,5 +726,52 @@ SELECT
 	pc.`r.population / cac10.population * 100` AS podil_Christianity
 FROM cbd_and_cttpm_10 AS cac10
 LEFT JOIN podil_christianity AS pc 
-	ON cac10.country = pc.country 
+	ON cac10.country = pc.country
+;
+
+SELECT 
+	cac18.*,
+	lf2.diff AS diff_life_expectancy
+FROM cbd_and_cttpm_18 AS cac18
+LEFT JOIN (
+			SELECT 
+				life_expectancy - nasledujici_hodnota AS diff,
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 					
+					 	THEN 'Taiwan*'
+					WHEN country = 'South Korea'	
+						THEN 'Korea, South'
+					ELSE country
+				END AS country,
+				life_expectancy
+			FROM (
+					SELECT
+						country,
+						`year`,
+						life_expectancy,
+						LAG(life_expectancy) OVER(ORDER BY country DESC) AS nasledujici_hodnota
+					FROM life_expectancy
+					WHERE `year` = 1965
+						OR `year` = 2015
+					) AS lf
+			WHERE `year` = 2015
+			ORDER BY country) AS lf2
+	ON cac18.country = lf2.country 
+ORDER BY country, date 
+	
+;
+
+SELECT 	
+	country,
+	`year`,
+	life_expectancy,
+	LAG(life_expectancy) OVER(ORDER BY country DESC) AS nasledujici_hodnota
+FROM life_expectancy le 
+WHERE `year` = 1965
+	OR `year` = 2015
+ORDER BY country 
+	
 	
