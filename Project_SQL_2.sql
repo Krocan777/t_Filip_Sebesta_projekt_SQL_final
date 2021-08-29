@@ -330,6 +330,39 @@ SELECT
 	*
 FROM cbd_and_cttpm_9
 
+-- Vytvoreni tabulky cbd_and_cttpm_10 > napojeni sloupce median_age_2018
+CREATE TABLE cbd_and_cttpm_10 AS 
+SELECT 
+	cac9.*,
+	c.median_age_2018
+FROM cbd_and_cttpm_9 AS cac9
+LEFT JOIN (
+			SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				median_age_2018
+			FROM countries
+			) AS c 
+	ON cac9.country = c.country 
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm_10 
+;
+
+
+
+
+
 
 
 
