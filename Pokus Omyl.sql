@@ -607,6 +607,124 @@ FROM countries c
 WHERE country = 'United States'
 ;
 
-	
+SELECT 
+	*
+FROM religions r 
+;
 
+SELECT 
+	cac10.country,
+	cac10.population,
+	cac10.date,
+	r.Christianity
+FROM cbd_and_cttpm_10 AS cac10
+LEFT JOIN (
+			SELECT 
+				cac10.country,
+				CASE WHEN r.religion = 'Christianity'
+					THEN r.population / cac10.population * 100 
+				END AS Christianity
+			FROM cbd_and_cttpm_10 AS cac10
+			LEFT JOIN religions AS r 
+				ON cac10.country = r.country 
+				AND r.region = 'Christianity' 
+			) AS r
+	ON cac10.country = r.country	
+;
+ 
+SELECT 
+	cac10.country,
+	cac10.population,
+	cac10.date,
+	r.podil
+FROM cbd_and_cttpm_10 AS cac10
+LEFT JOIN (
+			SELECT 
+				religion / population * 10 AS podil,
+				country
+			FROM religions
+			WHERE religion = 'Christianity'
+			) AS r
+	ON cac10.country = r.country 
+;
+
+SELECT 
+	*
+FROM religions r
+WHERE `year` = 2020
+ORDER BY `year` DESC 
+;
+
+SELECT 
+	*
+FROM religions r 
+WHERE `year` = 2020
+;
+
+SELECT 
+	cac10.country,
+	cac10.population,
+	cac10.date,
+	r.religion / cac10.population * 100 AS podil
+FROM cbd_and_cttpm_10 AS cac10, religions AS r 
+WHERE r.religion = 'Islam'
+	AND r.`year` = 2020
+	AND cac10.country = r.country 
+;
+
+SELECT DISTINCT 
+	COUNT(country),
+	religion 
+FROM religions r 
+WHERE `year` = 2020
+GROUP BY religion 
+;
+
+SELECT 
+	*
+FROM religions r 
+
+SELECT DISTINCT 
+	r.*,
+	r.population / cac10.population * 100
+FROM (
+		SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				population
+		FROM religions
+		WHERE religion = 'Christianity'
+			AND `year` = 2020
+	) AS r 
+LEFT JOIN cbd_and_cttpm_10 AS cac10
+	ON r.country = cac10.country 
+;
+
+SELECT 
+	*
+FROM religions r
+WHERE country = 'Czech Republic'
+	AND `year` = 2020
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm_10 cac 
+WHERE country = 'Czechia'
+;
+
+SELECT 
+	cac10.*,
+	pc.`r.population / cac10.population * 100` AS podil_Christianity
+FROM cbd_and_cttpm_10 AS cac10
+LEFT JOIN podil_christianity AS pc 
+	ON cac10.country = pc.country 
 	

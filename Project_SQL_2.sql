@@ -359,12 +359,367 @@ SELECT
 FROM cbd_and_cttpm_10 
 ;
 
+-- Vytvoreni TABLE, kde se budou nachazet procentuelni podily vyznavacu Christianity
+CREATE TABLE podil_Christianity AS 
+SELECT DISTINCT 
+	r.*,
+	r.population / cac10.population * 100
+FROM (
+		SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				population
+		FROM religions
+		WHERE religion = 'Christianity'
+			AND `year` = 2020
+	) AS r 
+LEFT JOIN cbd_and_cttpm_10 AS cac10
+	ON r.country = cac10.country 
+;
+
+SELECT 
+	*
+FROM podil_christianity
+
+-- Vytvoreni tabulky cbd_and_cttpm_11 > napojeni sloupce podil_Christianity
+CREATE TABLE cbd_and_cttpm_11 AS 
+SELECT 
+	cac10.*,
+	pc.`r.population / cac10.population * 100` AS podil_Christianity
+FROM cbd_and_cttpm_10 AS cac10
+LEFT JOIN podil_christianity AS pc 
+	ON cac10.country = pc.country 
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm_11
+
+-- Vytvoreni TABLE, kde se budou nachazet procentuelni podily vyznavacu Islam
+CREATE TABLE podil_Islam AS 
+SELECT DISTINCT 
+	r.*,
+	r.population / cac10.population * 100
+FROM (
+		SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				population
+		FROM religions
+		WHERE religion = 'Islam'
+			AND `year` = 2020
+	) AS r 
+LEFT JOIN cbd_and_cttpm_10 AS cac10
+	ON r.country = cac10.country 
+;
+
+SELECT 
+	*
+FROM podil_Islam
+
+-- Vytvoreni tabulky cbd_and_cttpm_12 > napojeni sloupce podil_Islam
+CREATE TABLE cbd_and_cttpm_12 AS 
+SELECT 
+	cac10.*,
+	p.`r.population / cac10.population * 100` AS podil_Islam
+FROM cbd_and_cttpm_11 AS cac10
+LEFT JOIN podil_Islam AS p
+	ON cac10.country = p.country 
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm_12
+;
 
 
+-- Vytvoreni TABLE, kde se budou nachazet procentuelni podily vyznavacu Buddhism
+CREATE TABLE podil_Buddhism AS 
+SELECT DISTINCT 
+	r.*,
+	r.population / cac10.population * 100
+FROM (
+		SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				population
+		FROM religions
+		WHERE religion = 'Buddhism'
+			AND `year` = 2020
+	) AS r 
+LEFT JOIN cbd_and_cttpm_10 AS cac10
+	ON r.country = cac10.country 
+;
 
+SELECT 
+	*
+FROM podil_Buddhism
 
+-- Vytvoreni tabulky cbd_and_cttpm_13 > napojeni sloupce podil_Buddhism
+CREATE TABLE cbd_and_cttpm_13 AS 
+SELECT 
+	cac10.*,
+	p.`r.population / cac10.population * 100` AS podil_Buddhism
+FROM cbd_and_cttpm_12 AS cac10
+LEFT JOIN podil_Buddhism AS p
+	ON cac10.country = p.country 
+;
 
+SELECT 	
+	*
+FROM cbd_and_cttpm_13
+;
 
+-- Vytvoreni TABLE, kde se budou nachazet procentuelni podily vyznavacu Hinduism
+CREATE TABLE podil_Hinduism AS 
+SELECT DISTINCT 
+	r.*,
+	r.population / cac10.population * 100
+FROM (
+		SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				population
+		FROM religions
+		WHERE religion = 'Hinduism'
+			AND `year` = 2020
+	) AS r 
+LEFT JOIN cbd_and_cttpm_10 AS cac10
+	ON r.country = cac10.country 
+;
 
+SELECT 
+	*
+FROM podil_Hinduism
+;
 
+-- Vytvoreni tabulky cbd_and_cttpm_14 > napojeni sloupce podil_Hinduism
+CREATE TABLE cbd_and_cttpm_14 AS 
+SELECT 
+	cac10.*,
+	p.`r.population / cac10.population * 100` AS podil_Hinduism
+FROM cbd_and_cttpm_13 AS cac10
+LEFT JOIN podil_Hinduism AS p
+	ON cac10.country = p.country 
+;
 
+SELECT 	
+	*
+FROM cbd_and_cttpm_14
+;
+
+-- Vytvoreni TABLE, kde se budou nachazet procentuelni podily vyznavacu Folk Religions
+CREATE TABLE podil_Folk_Religions AS 
+SELECT DISTINCT 
+	r.*,
+	r.population / cac10.population * 100
+FROM (
+		SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				population
+		FROM religions
+		WHERE religion = 'Folk Religions'
+			AND `year` = 2020
+	) AS r 
+LEFT JOIN cbd_and_cttpm_10 AS cac10
+	ON r.country = cac10.country 
+;
+
+SELECT 
+	*
+FROM podil_Folk_Religions
+;
+
+-- Vytvoreni tabulky cbd_and_cttpm_15 > napojeni sloupce podil_Folk_Religions
+CREATE TABLE cbd_and_cttpm_15 AS 
+SELECT 
+	cac10.*,
+	p.`r.population / cac10.population * 100` AS podil_Folk_Religions
+FROM cbd_and_cttpm_14 AS cac10
+LEFT JOIN podil_Folk_Religions AS p
+	ON cac10.country = p.country 
+;
+
+SELECT 	
+	*
+FROM cbd_and_cttpm_15
+;
+
+-- Vytvoreni TABLE, kde se budou nachazet procentuelni podily vyznavacu Unaffiliated Religions
+CREATE TABLE podil_Unaffiliated_Religions AS 
+SELECT DISTINCT 
+	r.*,
+	r.population / cac10.population * 100
+FROM (
+		SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				population
+		FROM religions
+		WHERE religion = 'Unaffiliated Religions'
+			AND `year` = 2020
+	) AS r 
+LEFT JOIN cbd_and_cttpm_10 AS cac10
+	ON r.country = cac10.country 
+;
+
+SELECT 
+	*
+FROM podil_Unaffiliated_Religions
+;
+
+-- Vytvoreni tabulky cbd_and_cttpm_16 > napojeni sloupce podil_Unaffiliated_Religions
+CREATE TABLE cbd_and_cttpm_16 AS 
+SELECT 
+	cac10.*,
+	p.`r.population / cac10.population * 100` AS podil_Unaffiliated_Religions
+FROM cbd_and_cttpm_15 AS cac10
+LEFT JOIN podil_Unaffiliated_Religions AS p
+	ON cac10.country = p.country 
+;
+
+SELECT 	
+	*
+FROM cbd_and_cttpm_16
+;
+
+-- Vytvoreni TABLE, kde se budou nachazet procentuelni podily vyznavacu Judaism
+CREATE TABLE podil_Judaism AS 
+SELECT DISTINCT 
+	r.*,
+	r.population / cac10.population * 100
+FROM (
+		SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				population
+		FROM religions
+		WHERE religion = 'Judaism'
+			AND `year` = 2020
+	) AS r 
+LEFT JOIN cbd_and_cttpm_10 AS cac10
+	ON r.country = cac10.country 
+;
+
+SELECT 
+	*
+FROM podil_Judaism
+;
+
+-- Vytvoreni tabulky cbd_and_cttpm_17 > napojeni sloupce podil_Judaism
+CREATE TABLE cbd_and_cttpm_17 AS 
+SELECT 
+	cac10.*,
+	p.`r.population / cac10.population * 100` AS podil_Judaism
+FROM cbd_and_cttpm_16 AS cac10
+LEFT JOIN podil_Judaism AS p
+	ON cac10.country = p.country 
+;
+
+SELECT 	
+	*
+FROM cbd_and_cttpm_17
+;
+
+-- Vytvoreni TABLE, kde se budou nachazet procentuelni podily vyznavacu Other Religions
+CREATE TABLE podil_Other_Religions AS 
+SELECT DISTINCT 
+	r.*,
+	r.population / cac10.population * 100
+FROM (
+		SELECT 
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				population
+		FROM religions
+		WHERE religion = 'Other Religions'
+			AND `year` = 2020
+	) AS r 
+LEFT JOIN cbd_and_cttpm_10 AS cac10
+	ON r.country = cac10.country 
+;
+
+SELECT 
+	*
+FROM podil_Other_Religions
+;
+
+-- Vytvoreni tabulky cbd_and_cttpm_18 > napojeni sloupce podil_Other_Religions
+CREATE TABLE cbd_and_cttpm_18 AS 
+SELECT 
+	cac10.*,
+	p.`r.population / cac10.population * 100` AS podil_Other_Religions
+FROM cbd_and_cttpm_17 AS cac10
+LEFT JOIN podil_Other_Religions AS p
+	ON cac10.country = p.country 
+;
+
+SELECT 	
+	*
+FROM cbd_and_cttpm_18
+;
