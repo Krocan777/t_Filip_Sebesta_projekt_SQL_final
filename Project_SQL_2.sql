@@ -299,6 +299,36 @@ LEFT JOIN (
 SELECT 
 	*
 FROM cbd_and_cttpm_8 AS cac8
+;
+
+-- Vytvoreni tabulky cbd_and_cttpm_9 > napojeni sloupce detska umrtnost
+CREATE TABLE cbd_and_cttpm_9 AS
+SELECT 
+	cac8.*,
+	e.mortaliy_under5
+FROM cbd_and_cttpm_8 AS cac8
+LEFT JOIN (
+			SELECT
+				CASE WHEN country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN country = 'United States'
+					 	THEN 'US' 
+					 WHEN country = 'Taiwan' 
+					 	THEN 'Taiwan*'
+					 WHEN country = 'South Korea'
+					 	THEN 'Korea, South'
+					 ELSE country
+				END AS country,
+				mortaliy_under5
+			FROM economies 
+			WHERE `year` = 2019
+			) AS e 
+		ON cac8.country = e.country
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm_9
 
 
 
