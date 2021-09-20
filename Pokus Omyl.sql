@@ -773,5 +773,18 @@ FROM life_expectancy le
 WHERE `year` = 1965
 	OR `year` = 2015
 ORDER BY country 
+;
+
+SELECT 
+	*
+FROM countries c2 
+;
+
+SELECT DISTINCT 
+	city 
+FROM weather w 
+WHERE city IS NOT NULL
+;
+
 	
 	

@@ -764,4 +764,102 @@ SELECT
 	*
 FROM cbd_and_cttpm_19
 WHERE country = 'Czechia'
+; 
+
+-- Vytvorime pomocnou tabulku countries_modified_2
+CREATE TABLE countries_modified_2 AS
+SELECT 
+	CASE WHEN c.country = 'Czech Republic'
+						THEN 'Czechia'
+					 WHEN c.country = 'United States'
+						THEN 'US' 
+					 WHEN c.country = 'Taiwan' 					
+						THEN 'Taiwan*'
+					WHEN c.country = 'South Korea'	
+						THEN 'Korea, South'
+					WHEN c.country = 'Russian Federation'
+						THEN 'Russia'
+					ELSE c.country
+				END AS country,
+	CASE WHEN c.capital_city = 'Athenai'
+						THEN 'Athens'
+					 WHEN c.capital_city = 'Bruxelles [Brussel]'
+					 	THEN 'Brussels'
+					 WHEN c.capital_city = 'Bucuresti'
+					 	THEN 'Bucharest'
+					 WHEN c.capital_city = 'Helsinki [Helsingfors]'
+					 	THEN 'Helsinki'
+					  WHEN c.capital_city = 'Kyiv'
+					 	THEN 'Kiev'
+					  WHEN c.capital_city = 'Lisboa'
+					 	THEN 'Lisbon'
+					  WHEN c.capital_city = 'Luxembourg [Luxemburg/L'
+					 	THEN 'Luxembourg'
+					 WHEN c.capital_city = 'Praha'
+					 	THEN 'Prague'
+					 WHEN c.capital_city = 'Roma'
+					 	THEN 'Rome'
+					 WHEN c.capital_city = 'Wien'
+					 	THEN 'Vienna'
+					 WHEN c.capital_city = 'Warszawa'
+					 	THEN 'Warsaw'
+					 ELSE c.capital_city 
+				END AS city
+FROM countries AS c 
+;
+
+SELECT 
+	*
+FROM countries_modified_2 cm 
+;
+
+-- Vytvoreni tabulky weather_2
+CREATE TABLE weather_2 AS 
+SELECT 
+	w.time,
+	REPLACE(temp, '°c', '') AS temp,
+	w.rain,
+	w.wind,
+	CAST(`date` AS DATE) AS `date`,
+	w.city,
+	cm.country 
+FROM weather AS w 
+LEFT JOIN countries_modified_2 AS cm
+	ON w.city = cm.city 
+;
+
+SELECT 
+	*
+FROM weather_2 w 
+;
+-- Vytvoreni pomocne tabulky pro prumernou denni teplotu
+CREATE TABLE prum_denni_tep AS 
+SELECT 
+	AVG(temp),
+	country,
+	date
+FROM weather_2 
+WHERE `time` IN ('06:00', '09:00', '12:00', '15:00', '18:00')
+	AND country IS NOT NULL 
+GROUP BY country, date
+;
+
+SELECT 
+	*
+FROM prum_denni_tep
+
+-- Vytvoreni tabulky cbd_and_cttpm_20 > napojeni sloupce prum_den_tep
+CREATE TABLE cbd_and_cttpm_20 AS 
+SELECT 
+	cac19.*,
+	pdt.`AVG(temp)` AS prum_den_tep
+FROM cbd_and_cttpm_19 AS cac19
+LEFT JOIN prum_denni_tep AS pdt
+	ON cac19.country = pdt.country
+	AND cac19.`date` = pdt.date
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm_20
 
