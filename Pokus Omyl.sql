@@ -918,7 +918,7 @@ FROM weather w
 DROP TABLE pokus3
 ;
 SELECT 
-	avg(temp_°c) 
+	*
 FROM pokus3
 ; 
 
@@ -966,14 +966,31 @@ FROM cbd_and_cttpm_21
 SELECT 
 	*
 FROM hodiny_sum hs 
--- max sila vetru behem dne
-
-SELECT 
-	*,
-	MAX(max_gust_km_h)
-FROM weather_3 w
-GROUP BY date, city 
 ;
+-- max sila vetru behem dne
+CREATE TABLE cbd_and_cttpm_22
+WITH cbd_and_cttpm_21 AS (
+	SELECT 
+		cac.*,
+		p3.MAX_gust_km_h
+	FROM cbd_and_cttpm_21 cac 
+	LEFT JOIN (
+		SELECT
+		`date`,
+		country,
+		MAX(max_gust_km_h) AS MAX_gust_km_h
+	FROM pokus3 		
+	WHERE country IS NOT NULL
+	GROUP BY date, city 
+	) AS p3
+	ON cac.date = p3.date
+		AND cac.country  = p3.country
+)
+SELECT 
+	*
+FROM cbd_and_cttpm_21 cac2 
+;
+
 
 
 	
