@@ -785,6 +785,195 @@ SELECT DISTINCT
 FROM weather w 
 WHERE city IS NOT NULL
 ;
+SELECT DISTINCT 
+	`year` 
+FROM religions r2 
+;
 
+SELECT 	
+	SUM(population),
+	country 
+FROM religions r 
+WHERE `year` = 2020
+GROUP BY country
+;
+
+SELECT 
+	*
+FROM religions r 
+;
+
+SELECT 
+	country,
+	population / SUM(population)
+FROM religions r 
+WHERE `year` = 2020
+	AND religion = 'Islam'
+GROUP BY country 
+;
+
+SELECT DISTINCT 
+	country,
+	population,
+	population_density,
+	podil_Islam,
+	podil_Buddhism,
+	podil_Hinduism,
+	podil_Folk_Religions,
+	podil_Unaffiliated_Religions,
+	podil_Judaism,
+	podil_Other_Religions
+FROM cbd_and_cttpm_20
+;
+
+SELECT 
+	*
+FROM weather w 
+;
+
+-- cisteni dat, pozor na mezery
+CREATE TABLE weather_3 AS 
+SELECT 
+	CAST(`date` AS date) AS `date`,
+	REPLACE(temp, ' °c', '') AS temp_°c,
+	REPLACE(rain, ' mm', '') AS rain_in_mm,
+	REPLACE (gust, ' km/h', '') AS max_gust_km_h
+FROM weather w 
+;
+SELECT 
+	*
+FROM weather_3 w 
+;
+DROP TABLE weather_3 
+;
+SELECT 
+	avg(temp),
+	city,
+	date
+-- 	CAST(temp AS INT) AS temp
+FROM weather w 
+GROUP BY date, city 
+;
+
+-- CREATE TABLE pokus AS 
+SELECT 
+	CAST(`temp_°c` AS INT) AS temp_°c,
+	ROUND(CAST(`rain_in_mm` AS FLOAT),2) AS `rain_in_mm`,
+	CAST(`max_gust_km_h` AS INT) AS `max_gust_km_h`,
+	date 
+FROM weather_3
+ORDER BY date
+;
+
+-- pouziti with a vnoreny select do jednoho dotazu
+CREATE TABLE pokus3 AS 
+WITH weather AS (
+	SELECT
+		CAST(`date` AS date) AS `date`,
+		cb.`time`,
+		cb.city,
+		CAST(`temp_°c` AS INT) AS temp_°c,
+		ROUND(CAST(`rain_in_mm` AS FLOAT),2) AS `rain_in_mm`,
+		CAST(`max_gust_km_h` AS INT) AS `max_gust_km_h`,
+		cm2.country,
+		CASE WHEN rain_in_mm != 0.0
+			THEN 3
+			WHEN rain_in_mm = 0.0
+			THEN 0
+		END AS pocet_hodin_deste
+	FROM (
+			SELECT 
+				`date`,
+				`time`,
+				city,
+				REPLACE(temp, ' °c', '') AS temp_°c,
+				REPLACE(rain, ' mm', '') AS rain_in_mm,
+				REPLACE (gust, ' km/h', '') AS max_gust_km_h
+			FROM weather w4 ) AS cb
+	LEFT JOIN countries_modified_2 AS cm2
+		ON cb.city = cm2.city
+	)
+SELECT 
+	*
+FROM weather cb
+;
+
+DROP TABLE pokus3
+;
+SELECT 
+	*
+FROM pokus3
+;
+
+SELECT 
+	*
+FROM cbd_and_cttpm_20 cac 
+
+;
+SELECT 
+	*
+FROM weather w 
+;
+
+DROP TABLE pokus3
+;
+SELECT 
+	avg(temp_°c) 
+FROM pokus3
+; 
+
+SELECT 
+	sum(pokus) 
+FROM pokus
+;
+
+
+
+--  srazky 2
+CREATE TABLE cbd_and_cttpm_21 AS 
+WITH cbd_and_cttpm_20 AS (
+	SELECT
+		cac20.*,
+		p3.sum_h_dest
+	FROM cbd_and_cttpm_20 AS cac20
+	LEFT JOIN (
+		SELECT 
+			`date`,
+			country,
+			CASE WHEN SUM(pocet_hodin_deste) > 24 
+				THEN SUM(pocet_hodin_deste) / 2
+				ELSE SUM(pocet_hodin_deste)
+			END AS sum_h_dest
+		FROM pokus3
+		GROUP BY date, city 
+		) AS p3
+	ON cac20.country = p3.country
+		AND cac20.date = p3.date
+		)
+SELECT 
+	*
+FROM cbd_and_cttpm_20
+;	
 	
+SELECT 
+	*
+FROM cbd_and_cttpm_21
+
+
+
+;
+
+SELECT 
+	*
+FROM hodiny_sum hs 
+-- max sila vetru behem dne
+
+SELECT 
+	*,
+	MAX(max_gust_km_h)
+FROM weather_3 w
+GROUP BY date, city 
+;
+
+
 	

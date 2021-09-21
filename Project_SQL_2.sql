@@ -861,5 +861,69 @@ LEFT JOIN prum_denni_tep AS pdt
 
 SELECT 
 	*
-FROM cbd_and_cttpm_20
+FROM cbd_and_cttpm_20 cac 
+ORDER BY country, `date` 
+;
 
+-- pouziti with a vnoreny select do jednoho dotazu, ocisteni dat a priprava poctu hodin deste behem dne
+-- CREATE TABLE pokus3 AS 
+WITH weather AS (
+	SELECT
+		CAST(`date` AS date) AS `date`,
+		cb.`time`,
+		cb.city,
+		CAST(`temp_°c` AS INT) AS temp_°c,
+		ROUND(CAST(`rain_in_mm` AS FLOAT),2) AS `rain_in_mm`,
+		CAST(`max_gust_km_h` AS INT) AS `max_gust_km_h`,
+		cm2.country,
+		CASE WHEN rain_in_mm != 0.0
+			THEN 3
+			WHEN rain_in_mm = 0.0
+			THEN 0
+		END AS pocet_hodin_deste
+	FROM (
+			SELECT 
+				`date`,
+				`time`,
+				city,
+				REPLACE(temp, ' °c', '') AS temp_°c,
+				REPLACE(rain, ' mm', '') AS rain_in_mm,
+				REPLACE (gust, ' km/h', '') AS max_gust_km_h
+			FROM weather w4 ) AS cb
+	LEFT JOIN countries_modified_2 AS cm2
+		ON cb.city = cm2.city
+	)
+SELECT 
+	*
+FROM weather cb
+;
+
+-- Napojeni sloupce sum_h_dest na moji tabulku 
+CREATE TABLE cbd_and_cttpm_21 AS 
+WITH cbd_and_cttpm_20 AS (
+	SELECT
+		cac20.*,
+		p3.sum_h_dest
+	FROM cbd_and_cttpm_20 AS cac20
+	LEFT JOIN (
+		SELECT 
+			`date`,
+			country,
+			CASE WHEN SUM(pocet_hodin_deste) > 24 
+				THEN SUM(pocet_hodin_deste) / 2
+				ELSE SUM(pocet_hodin_deste)
+			END AS sum_h_dest
+		FROM pokus3
+		GROUP BY date, city 
+		) AS p3
+	ON cac20.country = p3.country
+		AND cac20.date = p3.date
+		)
+SELECT 
+	*
+FROM cbd_and_cttpm_20
+;	
+
+SELECT 
+	*
+FROM cbd_and_cttpm_21
