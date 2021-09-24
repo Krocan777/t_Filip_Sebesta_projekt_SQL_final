@@ -37,8 +37,16 @@ ORDER BY cbd.`date`,cbd.country
 ;
 
 SELECT 
-	*
+	country,
+	`date` 
 FROM cbd_and_cttpm AS cac
+WHERE country = 'czechia'
+;
+INTERSECT
+SELECT
+	country,
+	`date` 
+FROM covid19_basic_differences cbd 
 
 ;
 
@@ -930,7 +938,7 @@ FROM cbd_and_cttpm_21
 ;
 
 -- Napojeni sloupce max_gust_km_h 
-CREATE TABLE t_Filip_Sebesta_projekt_SQL_final AS 
+CREATE TABLE t_Filip_Sebesta_projekt_SQL_final_beta AS 
 WITH cbd_and_cttpm_21 AS (
 	SELECT 
 		cac.*,
@@ -953,6 +961,7 @@ SELECT
 FROM cbd_and_cttpm_21
 ;
 
+
 SELECT 
 	*
-FROM t_Filip_Sebesta_projekt_SQL_final
+FROM t_Filip_Sebesta_projekt_SQL_final_beta
