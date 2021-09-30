@@ -1,5 +1,5 @@
--- Vytvoreni tabulky base_1 : Napojeni tests_performed a population na covid19_basic_differences 
-CREATE TABLE base_1 AS 
+-- Vytvoreni tabulky base_table : Napojeni tests_performed a population na covid19_basic_differences 
+CREATE TABLE base_table AS 
 WITH covid19_basic_differences AS (
 	SELECT 
 		cbd.`date`,
@@ -52,11 +52,11 @@ LEFT JOIN religions AS r
 
 SELECT 
 	*
-FROM base_1
+FROM base_table
 ;
 
--- Vytvoreni tabulky base_2: Napojeni casovych promennych 
-CREATE TABLE base_2 AS 
+-- Vytvoreni tabulky base_cas_prom: Napojeni casovych promennych 
+CREATE TABLE base_cas_prom AS 
 SELECT
 	*,
 	CASE WHEN WEEKDAY(`date`) BETWEEN 0 AND 4
@@ -71,20 +71,20 @@ SELECT
 			THEN 2
 		 ELSE 3
 	END AS rocni_obdobi
-FROM base_1
+FROM base_table
 ;
 
 SELECT 
 	*
-FROM base_2
+FROM base_cas_prom
 ;
 
--- Vytvoreni tabulky base_3: Napojeni sloupce hustota_zalidneni
-CREATE TABLE base_3 AS
+-- Vytvoreni tabulky base_hustota_zalidneni: Napojeni sloupce hustota_zalidneni
+CREATE TABLE base_hustota_zalidneni AS
 SELECT 
 	b.*,
 	ROUND(b.population / c.surface_area, 2) AS hustota_zalidneni
-FROM base_2 AS b
+FROM base_cas_prom AS b
 LEFT JOIN (
 			SELECT 
 				surface_area,
@@ -105,14 +105,14 @@ LEFT JOIN (
 
 SELECT 
 	*
-FROM base_3
+FROM base_hustota_zalidneni
 
--- Vytvoreni tabulky base_4: Napojeni sloupce HDP_na_obyvatele
-CREATE TABLE base_4 AS 
+-- Vytvoreni tabulky base_HDP_na_obyvatele: Napojeni sloupce HDP_na_obyvatele
+CREATE TABLE base_hdp_na_obyvatele AS 
 SELECT 
 	b.*,
 	ROUND(e.GDP/ b.population, 2) AS HDP_na_obyvatele
-FROM base_3 AS b
+FROM base_hustota_zalidneni AS b
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'Russian Federation'
@@ -133,15 +133,15 @@ LEFT JOIN (
 
 SELECT  
 	*
-FROM base_4
+FROM base_hdp_na_obyvatele
 ;
 
--- Vytvoreni tabulky base_5: Napojeni gini koeficientu
-CREATE TABLE base_5 AS 
+-- Vytvoreni tabulky base_gini_koef: Napojeni gini koeficientu
+CREATE TABLE base_gini_koef AS 
 SELECT 
 	b.*,
 	e.gini_koeficient
-FROM base_4 AS b 
+FROM base_hdp_na_obyvatele AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'Russian Federation'
@@ -159,16 +159,16 @@ LEFT JOIN (
 
 SELECT 
 	*
-FROM base_5
+FROM base_gini_koef
 ;
 
--- Vytvoreni tabulky base_6: Napojeni sloupce detska_umrtnost a median_veku_2018
-CREATE TABLE base_6 AS
-WITH base_5 AS (
+-- Vytvoreni tabulky base_detska_umrtnost_and_median_veku: Napojeni sloupce detska_umrtnost a median_veku_2018
+CREATE TABLE base_detska_umrtnost_and_median_veku AS
+WITH base_gini_koef AS (
 SELECT 
 	b.*,
 	e.detska_umrtnost
-FROM base_5 AS b 
+FROM base_gini_koef AS b 
 LEFT JOIN (
 			SELECT
 				CASE WHEN country = 'Russian Federation'
@@ -191,7 +191,7 @@ counntries AS (
 SELECT 
 	b.*,
 	c.median_age_2018
-FROM base_5 AS b 
+FROM base_gini_koef AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'Fiji Islands'
@@ -211,16 +211,16 @@ LEFT JOIN (
 
 SELECT 
 	*
-FROM base_6
+FROM base_detska_umrtnost_and_median_veku
 WHERE country = 'Czech Republic'
 ;
 
--- Vytvoreni tabulky base_7: Napojeni sloupce podil_Christianity
-CREATE TABLE base_7 AS 
+-- Vytvoreni tabulky base_podil_Christianity: Napojeni sloupce podil_Christianity
+CREATE TABLE base_podil_christianity AS 
 SELECT 
 	b.*,
 	ROUND(r.podil / b.population, 4) AS podil_Christianity
-FROM base_6 AS b 
+FROM base_detska_umrtnost_and_median_veku AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'The Democratic Republic of Congo'
@@ -239,12 +239,12 @@ LEFT JOIN (
 	ON b.country = r.country
 ;
 
--- Vytvoreni tabulky base_8: Napojeni sloupce podil_Islam
-CREATE TABLE base_8 AS 
+-- Vytvoreni tabulky base_podil_Islam: Napojeni sloupce podil_Islam
+CREATE TABLE base_podil_islam AS 
 SELECT 
 	b.*,
 	ROUND(r.podil / b.population, 4) AS podil_Islam
-FROM base_7 AS b 
+FROM base_podil_christianity AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'The Democratic Republic of Congo'
@@ -265,15 +265,15 @@ LEFT JOIN (
 
 SELECT 
 	*
-FROM base_8
+FROM base_podil_islam 
 ;
 
--- Vytvoreni tabulky base_9: Napojeni sloupce podil_Unaffiliated_Religions
-CREATE TABLE base_9 AS 
+-- Vytvoreni tabulky base_podil_Unaffiliated_Religions: Napojeni sloupce podil_Unaffiliated_Religions
+CREATE TABLE base_podil_unaffiliated_religions AS 
 SELECT 
 	b.*,
 	ROUND(r.podil / b.population, 4) AS podil_Unaffiliated_Religions
-FROM base_8 AS b 
+FROM base_podil_islam AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'The Democratic Republic of Congo'
@@ -293,14 +293,14 @@ LEFT JOIN (
 
 SELECT 
 	*
-FROM base_9
+FROM base_podil_unaffiliated_religions
 
--- Vytvoreni tabulky base_10: Napojeni sloupce podil_Hinduism
-CREATE TABLE base_10 AS 
+-- Vytvoreni tabulky base_podil_hinduism: Napojeni sloupce podil_Hinduism
+CREATE TABLE base_podil_hinduism AS 
 SELECT 
 	b.*,
 	ROUND(r.podil / b.population, 4) AS podil_Hinduism
-FROM base_9 AS b 
+FROM base_podil_unaffiliated_religions AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'The Democratic Republic of Congo'
@@ -320,14 +320,14 @@ LEFT JOIN (
 	
 SELECT 
 	*
-FROM base_10
+FROM base_podil_hinduism
 
--- Vytvoreni tabulky base_11: Napojeni sloupce podil_Buddhism
-CREATE TABLE base_11 AS 
+-- Vytvoreni tabulky base_podil_Buddhism: Napojeni sloupce podil_Buddhism
+CREATE TABLE base_podil_buddhism AS 
 SELECT 
 	b.*,
 	ROUND(r.podil / b.population, 4) AS podil_Buddhism
-FROM base_10 AS b 
+FROM base_podil_hinduism AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'The Democratic Republic of Congo'
@@ -348,15 +348,15 @@ LEFT JOIN (
 	
 SELECT 
 	*
-FROM base_11
+FROM base_podil_buddhism
 ;
 
--- Vytvoreni tabulky base_12: Napojeni sloupce podil_Folk Religions
-CREATE TABLE base_12 AS 
+-- Vytvoreni tabulky base_podil_Folk_Religions: Napojeni sloupce podil_Folk Religions
+CREATE TABLE base_podil_folk_religions AS 
 SELECT 
 	b.*,
 	ROUND(r.podil / b.population, 4) AS podil_Folk_Religions
-FROM base_11 AS b 
+FROM base_podil_buddhism AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'The Democratic Republic of Congo'
@@ -377,15 +377,15 @@ LEFT JOIN (
 	
 SELECT 
 	*
-FROM base_12
+FROM base_podil_folk_religions
 ;
 
--- Vytvoreni tabulky base_13: Napojeni sloupce podil_Other Religions
-CREATE TABLE base_13 AS 
+-- Vytvoreni tabulky base_podil_Other_religions: Napojeni sloupce podil_Other Religions
+CREATE TABLE base_podil_other_religions AS 
 SELECT 
 	b.*,
 	ROUND(r.podil / b.population, 4) AS podil_Other_Religions
-FROM base_12 AS b 
+FROM base_podil_folk_religions AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'The Democratic Republic of Congo'
@@ -406,14 +406,14 @@ LEFT JOIN (
 	
 SELECT 
 	*
-FROM base_13
+FROM base_podil_other_religions
 
--- Vytvoreni tabulky base_14: Napojeni sloupce podil_Judaism
-CREATE TABLE base_14 AS 
+-- Vytvoreni tabulky base_podil_Judaism: Napojeni sloupce podil_Judaism
+CREATE TABLE base_podil_judaism AS 
 SELECT 
 	b.*,
 	ROUND(r.podil / b.population, 4) AS podil_Judaism
-FROM base_13 AS b 
+FROM base_podil_other_religions AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN country = 'The Democratic Republic of Congo'
@@ -434,15 +434,15 @@ LEFT JOIN (
 
 SELECT 
 	*
-FROM base_14
+FROM base_podil_judaism
 ;
 
--- Vytvoreni tabulky base_15: Napojeni sloupce diff_life_expectancy
-CREATE TABLE base_15 AS 
+-- Vytvoreni tabulky base_diff_life_expectancy: Napojeni sloupce diff_life_expectancy
+CREATE TABLE base_diff_life_expectancy AS 
 SELECT 
 	b.*,
 	lf2.diff AS diff_life_expectancy
-FROM base_14 AS b
+FROM base_podil_judaism AS b
 LEFT JOIN (
 			SELECT 
 				life_expectancy - nasledujici_hodnota AS diff,
@@ -471,7 +471,7 @@ ORDER BY country, date
 
 SELECT 
 	*
-FROM base_15
+FROM base_diff_life_expectancy
 ;
 
 -- Vytvoreni pomocne tabulky weather_2
@@ -548,12 +548,12 @@ SELECT
 	*
 FROM weather2 w 
 
--- Vytvoreni tabulky base_16: Napojeni sloupce prum_den_tep
-CREATE TABLE base_16 AS 
+-- Vytvoreni tabulky base_prum_den_tep: Napojeni sloupce prum_den_tep
+CREATE TABLE base_prum_den_tep AS 
 SELECT 
 	b.*,
 	w.prum_den_tep
-FROM base_15 AS b
+FROM base_diff_life_expectancy AS b
 LEFT JOIN (
 			SELECT 
 				AVG(`temp_°c`) AS prum_den_tep,
@@ -569,14 +569,14 @@ LEFT JOIN (
 
 SELECT 
 	*
-FROM base_16
+FROM base_prum_den_tep
 
--- Vytvoreni tabulky base_17: Napojeni sloupce pocet_h_deste
-CREATE TABLE base_17 AS 
+-- Vytvoreni tabulky base_pocet_h_deste: Napojeni sloupce pocet_h_deste
+CREATE TABLE base_pocet_h_deste AS 
 SELECT 
 	b.*,
 	w.pocet_h_deste
-FROM base_16 AS b 
+FROM base_prum_den_tep AS b 
 LEFT JOIN (
 			SELECT 
 				CASE WHEN SUM(pocet_hodin_deste) > 24 
@@ -594,14 +594,14 @@ LEFT JOIN (
 
 SELECT 
 	*
-FROM base_17
+FROM base_pocet_h_deste
 
--- Vytvoreni tabulky base_18: Napojeni sloupce max_gust
+-- Vytvoreni tabulky t_Filip_Sebesta_projekt_SQL_final: Napojeni sloupce max_gust
 CREATE TABLE t_Filip_Sebesta_projekt_SQL_final
 SELECT 
 	b.*, 
 	w.max_gust
-FROM base_17 AS b
+FROM base_pocet_h_deste AS b
 LEFT JOIN (
 			SELECT 
 				MAX(max_gust_km_h) AS max_gust,
@@ -617,5 +617,8 @@ LEFT JOIN (
 SELECT 
 	*
 FROM t_filip_sebesta_projekt_sql_final
+;
+
+
 
 
