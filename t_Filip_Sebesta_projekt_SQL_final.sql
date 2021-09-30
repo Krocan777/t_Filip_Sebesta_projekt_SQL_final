@@ -618,6 +618,7 @@ SELECT
 	*
 FROM t_filip_sebesta_projekt_sql_final
 ;
+;
 
 
 
